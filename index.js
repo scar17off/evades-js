@@ -1,13 +1,13 @@
 const eventemitter = require("events");
 const WebSocket = require("ws");
 const axios = require('axios');
-const parcelRequire = require("./client-require.js");
 
 console.clear();
 
+const parcelRequire = require("./client-require.js");
 const encoder = parcelRequire("fYSqx");
 const decoder = parcelRequire("9Etmg");
-const c = parcelRequire("dGQ4b");
+const ccodegen = parcelRequire("dGQ4b");
 const Type = parcelRequire("b9mnO");
 const Writer = parcelRequire("8ZbRf");
 const util = parcelRequire("dGQ4b");
@@ -20,13 +20,15 @@ const protocol = parcelRequire("3V5RS");
 class EJS extends eventemitter {
     constructor(options = {}) {
         super();
-        this.clientOptions = {};
 
         this.player = {};
+        this.players = {};
         this.user = {
             username: null
         };
+        this.world = {entities: null, globalEntities: null}
 
+        this.clientOptions = {};
         if(options.HeroType) this.clientOptions.HeroType = options.HeroType;
         else this.clientOptions.HeroType = gameDataProtocol.HeroType.MAGMAX;
         if(options.ws) this.clientOptions.wss = options.wss;
@@ -103,22 +105,15 @@ class EJS extends eventemitter {
             let buffer = new ArrayBuffer(4);
             let dv = new DataView(buffer);
 
-            if(this.clientOptions.HeroType === gameDataProtocol.HeroType.MAGMAX) {
-                dv.setInt8(0, 16);
-                dv.setInt8(1, 0);
-            } else {
-                dv.setInt8(0, 8);
-                dv.setInt8(1, this.clientOptions.HeroType + 1);
-                dv.setInt8(2, 16);
-                dv.setInt8(3, 0);
-            };
+            dv.setInt8(0, 8);
+            dv.setInt8(1, this.clientOptions.HeroType + 1);
+            dv.setInt8(2, 16);
+            dv.setInt8(3, 0);
 
             this.ws.send(buffer);
             // this.ws.send(protocol.ClientPayload.encode(data).finish());
 
-            setTimeout(() => {
-                this.emit("join");
-            }, 1000);
+            this.emit("open");
         };
 
         this.ws.onmessage = (msg) => {
@@ -126,7 +121,10 @@ class EJS extends eventemitter {
 
             try {
                 msg = JSON.parse(msg);
-                if(msg.message == "OK") this.user.username = msg.username;
+                if(msg.message == "OK") {
+                    this.user.username = msg.username;
+                    setTimeout(() => this.emit("join"), 1000);
+                };
             } catch(error) { };
 
             if("string" == typeof msg) return;
@@ -136,10 +134,15 @@ class EJS extends eventemitter {
 
             msg = protocol.FramePayload.decode(t);
 
-            // console.log(msg);
+            this.world.globalEntities = msg.globalEntities;
+            this.world.entities = msg.entities;
+            
+            let players = msg.globalEntities.filter(entity => entity.name);
+            if(players.length > 0) this.players = players;
         };
 
         this.ws.onclose = () => {
+            this.emit("close");
             console.log("Connection closed");
         };
     };
