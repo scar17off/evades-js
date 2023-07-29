@@ -23,9 +23,6 @@ class EJS extends eventemitter {
 
         this.player = {};
         this.players = {};
-        this.user = {
-            username: null
-        };
         this.world = {entities: null, globalEntities: null}
 
         this.clientOptions = {};
@@ -67,6 +64,8 @@ class EJS extends eventemitter {
             .catch(error => {
                 console.error("[Error]:", error);
             });
+        } else {
+            this.clientOptions.sessionCookie = null;
         };
     };
     setKeyState(key, value) {
@@ -121,8 +120,9 @@ class EJS extends eventemitter {
 
             try {
                 msg = JSON.parse(msg);
-                if(msg.message == "OK") {
+                if(msg.message == "OK" || msg.message == "Restored") {
                     this.username = msg.username;
+                    console.log("Connected! Username: " + bot.username);
                     setTimeout(() => this.emit("join"), 1000);
                 };
             } catch(error) { };
@@ -138,14 +138,16 @@ class EJS extends eventemitter {
             this.world.entities = msg.entities;
             
             let players = msg.globalEntities.filter(entity => entity.name);
-            
+
             if(players.length > 0) {
+                this.emit("playersUpdated", players);
                 this.players = players;
                 
                 for(let id in players) {
                     let player = players[id];
                     
                     if(player.name == this.username) {
+                        this.emit("playerUpdated", player);
                         this.player = player;
                     };
                 };
