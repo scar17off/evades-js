@@ -122,7 +122,7 @@ class EJS extends eventemitter {
             try {
                 msg = JSON.parse(msg);
                 if(msg.message == "OK") {
-                    this.user.username = msg.username;
+                    this.username = msg.username;
                     setTimeout(() => this.emit("join"), 1000);
                 };
             } catch(error) { };
@@ -138,7 +138,18 @@ class EJS extends eventemitter {
             this.world.entities = msg.entities;
             
             let players = msg.globalEntities.filter(entity => entity.name);
-            if(players.length > 0) this.players = players;
+            
+            if(players.length > 0) {
+                this.players = players;
+                
+                for(let id in players) {
+                    let player = players[id];
+                    
+                    if(player.name == this.username) {
+                        this.player = player;
+                    };
+                };
+            };
         };
 
         this.ws.onclose = () => {
