@@ -40,7 +40,7 @@ class EJS extends eventemitter {
         else this.clientOptions.location = "eu.";
 
         if(options.ws) this.clientOptions.wss = options.wss;
-        else this.clientOptions.wss = `wss://${options.location}evades.io/api/game/connect?backend=${options.server - 1}&game=0`;
+        else this.clientOptions.wss = `wss://${this.clientOptions.location}evades.io/api/game/connect?backend=${this.clientOptions.server - 1}&game=0`;
 
         if(options.sessionCookie) {
             this.clientOptions.sessionCookie = options.sessionCookie;
