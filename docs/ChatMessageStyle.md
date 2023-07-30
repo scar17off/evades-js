@@ -1,4 +1,5 @@
 ### ChatMessageStyle
+
 - `int32` MESSAGE_STYLE_NORMAL - Message style for normal message style.
 - `int32` MESSAGE_STYLE_JR_MOD - Message style for junior moderator message style.
 - `int32` MESSAGE_STYLE_MOD - Message style for moderator message style.
