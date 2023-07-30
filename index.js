@@ -5,14 +5,14 @@ const axios = require('axios');
 console.clear();
 
 const parcelRequire = require("./client-require.js");
-const encoder = parcelRequire("fYSqx");
-const decoder = parcelRequire("9Etmg");
-const ccodegen = parcelRequire("dGQ4b");
-const Type = parcelRequire("b9mnO");
-const Writer = parcelRequire("8ZbRf");
-const util = parcelRequire("dGQ4b");
-const Reader = parcelRequire("hKJaw");
-const Message = parcelRequire("h1CyE");
+// const encoder = parcelRequire("fYSqx");
+// const decoder = parcelRequire("9Etmg");
+// const ccodegen = parcelRequire("dGQ4b");
+// const Type = parcelRequire("b9mnO");
+// const Writer = parcelRequire("8ZbRf");
+// const util = parcelRequire("dGQ4b");
+// const Reader = parcelRequire("hKJaw");
+// const Message = parcelRequire("h1CyE");
 const protocol = parcelRequire("3V5RS");
 
 // console.log(protocol.ClientPayload);
@@ -100,6 +100,17 @@ class EJS extends eventemitter {
 
         this.ws.sequence++;
         if(this.ws.sequence >= 256) this.ws.sequence = 0;
+    };
+    setMouseMovement(x, y) {
+        let data = {
+            mouseDown: {
+                x,
+                y,
+                updated: true
+            }
+        };
+
+        this.ws.send(protocol.ClientPayload.encode(protocol.ClientPayload.create(data)).finish());
     };
     makeSocket() {
         let cookie = `session="${this.clientOptions.sessionCookie}"`;
