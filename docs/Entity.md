@@ -1,8 +1,4 @@
 ### Entity
-- `int32` ChatMessage.id - Entity ID for a chat message.
-- `string` ChatMessage.sender - Sender of the chat message.
-- `ChatMessageStyle` ChatMessage.style - Entity ID for the style of the chat message (e.g., font, color).
-- `string` ChatMessage.text - Text content of the chat message.
 - `int32` id - Entity ID for an entity.
 - `EntityType` entityType - Entity ID for the type of the entity.
 - `bool` removed - Indicates if the entity is removed.
