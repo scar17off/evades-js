@@ -133,14 +133,16 @@ class EJS extends eventemitter {
         this.ws.onmessage = (msg) => {
             msg = msg.data;
 
-            try {
-                msg = JSON.parse(msg);
-                if(msg.message == "OK" || msg.message == "Restored") {
-                    this.username = msg.username;
-                    console.log("Connected! Username: " + bot.username);
-                    setTimeout(() => this.emit("join"), 1000);
+            if(typeof msg == "string") {
+                if(msg.startsWith("{") && msg.endsWith("}")) {
+                    msg = JSON.parse(msg);
+                    if(msg.message == "OK" || msg.message == "Restored") {
+                        this.username = msg.username;
+                        console.log("Connected! Username: " + this.username);
+                        setTimeout(() => this.emit("join"), 1000);
+                    };
                 };
-            } catch(error) { };
+            };
 
             if("string" == typeof msg) return;
 
