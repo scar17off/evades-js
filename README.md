@@ -24,7 +24,7 @@ bot.on("join", () => {
 `close` - Closed WebSocket connection.\
 `join` - Joined to the server.\
 `messages` - List of messages sent at the same time.\
-`rawMessage` - Returns `"nickname: message"` formatted-message.\
+`rawMessage` - Returns `"nickname: message"`.\
 `chatMessage` - Returns ChatMessage class.\
 `message` - Decoded WebSocket messages.
 
