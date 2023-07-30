@@ -35,9 +35,3 @@ bot.on("join", () => {
 `username, password (optional)` - Account username and password for logging in.\
 `server (optional)` - Server id. (1, 2, 3, 4)\
 `location (optional)` - Server location. (eu, us)
-
-### ChatMessage
-- `int32` ChatMessage.id
-- `string` ChatMessage.sender
-- `ChatMessageStyle` ChatMessage.style
-- `string` ChatMessage.text
