@@ -1,5 +1,5 @@
 ### ChatMessage
-- `int32` ChatMessage.id
-- `string` ChatMessage.sender
-- `ChatMessageStyle` ChatMessage.style
-- `string` ChatMessage.text
+- `int32` id
+- `string` sender
+- `ChatMessageStyle` style
+- `string` text
