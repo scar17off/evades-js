@@ -29,3 +29,5 @@ bot.on("join", () => {
 `wss (optional)` - Hero type (default: `"wss://eu.evades.io/api/game/connect?backend=0&game=0"`).\
 `sessionCookie (optional)` - Session cookie for logging in.\
 `username, password (optional)` - Account username and password for logging in.
+`server` - Server id (1, 2, 3, 4)
+`location` - Server location (eu, us)
