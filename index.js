@@ -150,21 +150,28 @@ class EJS extends eventemitter {
             if(t.byteLength === 0) return;
 
             msg = protocol.FramePayload.decode(t);
+            msg = protocol.FramePayload.toObject(msg);
 
             this.world.globalEntities = msg.globalEntities;
             this.world.entities = msg.entities;
-            
-            let players = msg.globalEntities.filter(entity => entity.name);
+
+            this.emit("message", msg);
+
+            if(msg.chat) {
+                this.emit("messages", msg.chat.messages);
+                this.emit("rawMessage", `${msg.chat.messages[0].sender}: ${msg.chat.messages[0].text}`);
+                this.emit("chatMessage", msg.chat.messages[0]);
+            };
+
+            let players = msg.entities.filter(entity => entity.name);
 
             if(players.length > 0) {
-                this.emit("playersUpdated", players);
                 this.players = players;
                 
                 for(let id in players) {
                     let player = players[id];
-                    
+
                     if(player.name == this.username) {
-                        this.emit("playerUpdated", player);
                         this.player = player;
                     };
                 };
