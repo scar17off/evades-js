@@ -33,6 +33,8 @@ class EJS extends eventemitter {
         if(options.server) this.clientOptions.server = options.server;
         else this.clientOptions.server = "0";
 
+        if(this.clientOptions.server - 1 < 0) this.clientOptions.server = "0";
+
         if(options.location == "us") this.clientOptions.location = '';
         else if(options.location == "eu") this.clientOptions.location = "eu.";
         else this.clientOptions.location = "eu.";
