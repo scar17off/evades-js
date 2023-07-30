@@ -1,4 +1,5 @@
 ### Entity
+
 - `int32` id - Entity ID for an entity.
 - `EntityType` entityType - Entity ID for the type of the entity.
 - `bool` removed - Indicates if the entity is removed.
