@@ -1,12 +1,12 @@
 ### ChatMessageStyle
-- `int32` ChatMessageStyle.MESSAGE_STYLE_NORMAL - Entity ID for normal message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_JR_MOD - Entity ID for junior moderator message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_MOD - Entity ID for moderator message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_SR_MOD - Entity ID for senior moderator message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_HEAD_MOD - Entity ID for head moderator message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_DEV - Entity ID for developer message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_YOUTUBER - Entity ID for YouTuber message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_STREAMER - Entity ID for streamer message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_SERVER_WARNING - Entity ID for server warning message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_SERVER_INFO - Entity ID for server info message style.
-- `int32` ChatMessageStyle.MESSAGE_STYLE_PRIVATE_MESSAGE - Entity ID for private message style.
+- `int32` MESSAGE_STYLE_NORMAL - Entity ID for normal message style.
+- `int32` MESSAGE_STYLE_JR_MOD - Entity ID for junior moderator message style.
+- `int32` MESSAGE_STYLE_MOD - Entity ID for moderator message style.
+- `int32` MESSAGE_STYLE_SR_MOD - Entity ID for senior moderator message style.
+- `int32` MESSAGE_STYLE_HEAD_MOD - Entity ID for head moderator message style.
+- `int32` MESSAGE_STYLE_DEV - Entity ID for developer message style.
+- `int32` MESSAGE_STYLE_YOUTUBER - Entity ID for YouTuber message style.
+- `int32` MESSAGE_STYLE_STREAMER - Entity ID for streamer message style.
+- `int32` MESSAGE_STYLE_SERVER_WARNING - Entity ID for server warning message style.
+- `int32` MESSAGE_STYLE_SERVER_INFO - Entity ID for server info message style.
+- `int32` MESSAGE_STYLE_PRIVATE_MESSAGE - Entity ID for private message style.
