@@ -26,7 +26,9 @@ bot.on("join", () => {
 `messages` - List of messages sent at the same time.\
 `rawMessage` - Returns `"nickname: message"`.\
 `chatMessage` - Returns ChatMessage class.\
-`message` - Decoded WebSocket messages.
+`message` - Decoded WebSocket messages.\
+`playerJoin` - Player joined the server.\
+`playerLeft` - Player left the server.
 
 # Options
 `HeroType (optional)` - Hero type (default: `gameDataProtocol.HeroType.MAGMAX`).\
