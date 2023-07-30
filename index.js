@@ -26,10 +26,20 @@ class EJS extends eventemitter {
         this.world = {entities: null, globalEntities: null}
 
         this.clientOptions = {};
+
         if(options.HeroType) this.clientOptions.HeroType = options.HeroType;
         else this.clientOptions.HeroType = gameDataProtocol.HeroType.MAGMAX;
+
+        if(options.server) this.clientOptions.server = options.server;
+        else this.clientOptions.server = "0";
+
+        if(options.location == "us") this.clientOptions.location = '';
+        else if(options.location == "eu") this.clientOptions.location = "eu.";
+        else this.clientOptions.location = "eu.";
+
         if(options.ws) this.clientOptions.wss = options.wss;
-        else this.clientOptions.wss = "wss://eu.evades.io/api/game/connect?backend=0&game=0";
+        else this.clientOptions.wss = `wss://${options.location}evades.io/api/game/connect?backend=${options.server - 1}&game=0`;
+
         if(options.sessionCookie) {
             this.clientOptions.sessionCookie = options.sessionCookie;
             this.makeSocket();
@@ -85,6 +95,9 @@ class EJS extends eventemitter {
         dv.setInt8(7, keys[key]);
 
         this.ws.send(buffer);
+
+        this.ws.sequence++;
+        if(this.ws.sequence >= 256) this.ws.sequence = 0;
     };
     makeSocket() {
         let cookie = `session="${this.clientOptions.sessionCookie}"`;
