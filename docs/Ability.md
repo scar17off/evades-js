@@ -1,6 +1,6 @@
 ### Ability
 
-- `AbilityType` abilityType - Entity ID for the type of the ability.
+- `AbilityType` abilityType - ID for the type of the ability.
 - `string` name - The name of the ability.
 - `string` description - A description of the ability, providing additional information about its effects or usage.
 - `float` energyCost - The energy cost required to use the ability.
