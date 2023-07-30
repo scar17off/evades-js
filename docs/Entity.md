@@ -1,0 +1,108 @@
+### Entity
+- `int32` ChatMessage.id - Entity ID for a chat message.
+- `string` ChatMessage.sender - Sender of the chat message.
+- `ChatMessageStyle` ChatMessage.style - Entity ID for the style of the chat message (e.g., font, color).
+- `string` ChatMessage.text - Text content of the chat message.
+- `int32` id - Entity ID for an entity.
+- `EntityType` entityType - Entity ID for the type of the entity.
+- `bool` removed - Indicates if the entity is removed.
+- `float` x - X-coordinate of the entity.
+- `float` y - Y-coordinate of the entity.
+- `int32` radius - Radius of the entity.
+- `float` width - Width of the entity.
+- `float` height - Height of the entity.
+- `float` duration - Duration of the entity.
+- `float` strength - Strength of the entity.
+- `float` speed - Speed of the entity.
+- `string` name - Name of the entity.
+- `int32` level - Level of the entity.
+- `int32` experience - Experience points of the entity.
+- `int32` previousLevelExperience - Experience points required to reach the previous level.
+- `int32` nextLevelExperience - Experience points required to reach the next level.
+- `int32` upgradePoints - Upgrade points of the entity.
+- `float` energy - Energy of the entity.
+- `int32` maxEnergy - Maximum energy capacity of the entity.
+- `float` energyRegen - Energy regeneration rate of the entity.
+- `float` deathTimer - Death timer of the entity.
+- `float` deathTimerTotal - Total death timer of the entity.
+- `HeroType` heroType - Entity ID for the type of the hero character.
+- `Ability` abilityOne - Entity ID for the first ability of the entity.
+- `Ability` abilityTwo - Entity ID for the second ability of the entity.
+- `Ability` abilityThree - Entity ID for the third ability of the entity.
+- `bool` nightActivated - Indicates if the night mode is activated for the entity.
+- `Effect` effects - List of effects on the entity (repeated).
+- `bool` isHarmless - Indicates if the entity is harmless.
+- `int32` regionHighestAreaAchieved - The highest area achieved in the region by the entity.
+- `int32` winCount - Number of wins by the entity.
+- `int32` rescuedCount - Number of times the entity was rescued.
+- `int32` survivalTime - Survival time of the entity.
+- `string` hatName - Name of the hat worn by the entity.
+- `string` bodyName - Name of the body worn by the entity.
+- `string` gemName - Name of the gem used by the entity.
+- `bool` isIced - Indicates if the entity is iced.
+- `int32` icedTime - Time when the entity got iced.
+- `int32` icedTimeLeft - Remaining time for the entity's iced status.
+- `bool` isSnowballed - Indicates if the entity is snowballed.
+- `int32` snowballedTime - Time when the entity got snowballed.
+- `int32` snowballedTimeLeft - Remaining time for the entity's snowballed status.
+- `bool` isDeparted - Indicates if the entity is departed.
+- `bool` isBandaged - Indicates if the entity is bandaged.
+- `bool` isUnbandaging - Indicates if the entity is unbandaging.
+- `bool` fusionActivated - Indicates if fusion is activated for the entity.
+- `float` mortarTime - Time for the entity's mortar.
+- `float` shadowTotalTime - Total shadow time of the entity.
+- `float` shadowTime - Shadow time of the entity.
+- `bool` inFear - Indicates if the entity is in fear.
+- `int32` areaNumber - Area number of the entity.
+- `string` areaName - Name of the area where the entity is located.
+- `string` regionName - Name of the region where the entity is located.
+- `bool` victoryArea - Indicates if the entity is in the victory area.
+- `bool` rescueable - Indicates if the entity can be rescued.
+- `bool` decayed - Indicates if the entity is decayed.
+- `float` shatterTime - Time for the entity's shatter effect.
+- `bool` sugarRushActivated - Indicates if sugar rush is activated for the entity.
+- `bool` sweetToothConsumed - Indicates if the entity consumed sweet tooth.
+- `bool` isObscured - Indicates if the entity is obscured.
+- `bool` isPoisoned - Indicates if the entity is poisoned.
+- `int32` poisonedTime - Time when the entity got poisoned.
+- `int32` poisonedTimeLeft - Remaining time for the entity's poisoned status.
+- `bool` crumbledInvulnerability - Indicates if the entity has crumbled invulnerability.
+- `int32` crumbledTime - Time when the entity got crumbled.
+- `int32` crumbledTimeLeft - Remaining time for the entity's crumbled status.
+- `bool` shaken - Indicates if the entity is shaken.
+- `bool` shakenImmune - Indicates if the entity is immune to shaking.
+- `float` shadowDeathTimer - Death timer in shadow mode of the entity.
+- `float` healingTime - Healing time of the entity.
+- `bool` isStickyCoatActivated - Indicates if sticky coat is activated for the entity.
+- `bool` canCling - Indicates if the entity can cling.
+- `bool` burning - Indicates if the entity is burning.
+- `bool` isEmber - Indicates if the entity is in ember form.
+- `bool` shadowedInvulnerability - Indicates if the entity has shadowed invulnerability.
+- `int32` shadowedTime - Time when the entity got shadowed.
+- `int32` shadowedTimeLeft - Remaining time for the entity's shadowed status.
+- `bool` isWormhole - Indicates if the entity is in wormhole mode.
+- `bool` isDestroyed - Indicates if the entity is destroyed.
+- `float` grassTime - Time for the entity's grass effect.
+- `bool` grassHarmless - Indicates if the grass effect is harmless for the entity.
+- `float` stickyCoatDisabled - Time when sticky coat is disabled for the entity.
+- `float` brightness - Brightness of the entity.
+- `int32` electrifyInterval - Interval for entity electrification.
+- `bool` isStone - Indicates if the entity is in stone form.
+- `bool` gainedImmunity - Indicates if the entity gained immunity.
+- `float` roboScannerId - ID of the Robo Scanner entity.
+- `bool` magnetized - Indicates if the entity is magnetized.
+- `bool` energized - Indicates if the entity is energized.
+- `bool` hasWindDebuff - Indicates if the entity has the wind debuff.
+- `bool` hasWaterDebuff - Indicates if the entity has the water debuff.
+- `bool` hasFireDebuff - Indicates if the entity has the fire debuff.
+- `bool` hasEarthDebuff - Indicates if the entity has the earth debuff.
+- `bool` cybotDefeated - Indicates if the Cybot is defeated.
+- `bool` reduced - Indicates if the entity is reduced.
+- `bool` isRepelling - Indicates if the entity is repelling.
+- `string` imageName - Name of the image associated with the entity.
+- `int32` colorChange - Color change value for the entity.
+- `int32` health - Health points of the entity.
+- `int32` maxHealth - Maximum health points of the entity.
+- `TextureType` texture - Entity ID for the type of texture for an entity.
+- `int32` playerInteractions - Number of interactions a player had.
+- `int32` achievementCount - Number of achievements.
