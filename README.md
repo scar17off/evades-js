@@ -22,12 +22,22 @@ bot.on("join", () => {
 # Events
 `open` - Opened WebSocket connection.\
 `close` - Closed WebSocket connection.\
-`join` - Joined to the server.
+`join` - Joined to the server.\
+`messages` - List of messages sent at the same time.\
+`rawMessage` - Returns `"nickname: message"` formatted-message.\
+`chatMessage` - Returns ChatMessage class.\
+`message` - Decoded WebSocket messages.
 
 # Options
 `HeroType (optional)` - Hero type (default: `gameDataProtocol.HeroType.MAGMAX`).\
 `wss (optional)` - Hero type (default: `"wss://eu.evades.io/api/game/connect?backend=0&game=0"`).\
 `sessionCookie (optional)` - Session cookie for logging in.\
-`username, password (optional)` - Account username and password for logging in.
-`server` - Server id (1, 2, 3, 4)
-`location` - Server location (eu, us)
+`username, password (optional)` - Account username and password for logging in.\
+`server` - Server id. (1, 2, 3, 4)\
+`location` - Server location. (eu, us)
+
+### ChatMessage
+- `int32` ChatMessage.id
+- `string` ChatMessage.sender
+- `ChatMessageStyle` ChatMessage.style
+- `string` ChatMessage.text
