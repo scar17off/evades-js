@@ -1,3 +1,4 @@
+### ChatMessageStyle
 - `int32` ChatMessageStyle.MESSAGE_STYLE_NORMAL - Entity ID for normal message style.
 - `int32` ChatMessageStyle.MESSAGE_STYLE_JR_MOD - Entity ID for junior moderator message style.
 - `int32` ChatMessageStyle.MESSAGE_STYLE_MOD - Entity ID for moderator message style.
