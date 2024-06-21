@@ -1,8 +1,8 @@
 const eventemitter = require("events");
 const WebSocket = require("ws");
-const axios = require('axios');
+const axios = require("axios");
 
-console.clear();
+// console.clear();
 
 const parcelRequire = require("./client-require.js");
 // const encoder = parcelRequire("fYSqx");
