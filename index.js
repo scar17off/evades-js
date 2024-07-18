@@ -1,29 +1,35 @@
 const eventemitter = require("events");
 const WebSocket = require("ws");
-const axios = require("axios");
-
-// console.clear();
+const axios = require('axios');
 
 const parcelRequire = require("./client-require.js");
-// const encoder = parcelRequire("fYSqx");
-// const decoder = parcelRequire("9Etmg");
-// const ccodegen = parcelRequire("dGQ4b");
-// const Type = parcelRequire("b9mnO");
-// const Writer = parcelRequire("8ZbRf");
-// const util = parcelRequire("dGQ4b");
-// const Reader = parcelRequire("hKJaw");
-// const Message = parcelRequire("h1CyE");
 const protocol = parcelRequire("3V5RS");
 
-// console.log(protocol.ClientPayload);
-
+/**
+ * EJS class to handle the game client.
+ * @extends eventemitter
+ */
 class EJS extends eventemitter {
+    /**
+     * Creates an instance of EJS.
+     * @param {Object} options - The options for the client.
+     * @param {string} [options.HeroType] - The hero type.
+     * @param {string} [options.server] - The server to connect to.
+     * @param {string} [options.location] - The location of the server.
+     * @param {string} [options.ws] - The WebSocket URL.
+     * @param {string} [options.sessionCookie] - The session cookie.
+     * @param {string} [options.username] - The username for authentication.
+     * @param {string} [options.password] - The password for authentication.
+     */
     constructor(options = {}) {
         super();
 
+        this.input = { mouseDown: { x: 0, y: 0, updated: false } };
         this.player = {};
         this.players = {};
-        this.world = {entities: null, globalEntities: null}
+        this.area = {};
+        this.map = {};
+        this.world = { entities: null, globalEntities: null }
 
         this.clientOptions = {};
 
@@ -40,7 +46,7 @@ class EJS extends eventemitter {
         else this.clientOptions.location = "eu.";
 
         if(options.ws) this.clientOptions.wss = options.wss;
-        else this.clientOptions.wss = `wss://${this.clientOptions.location}evades.io/api/game/connect?backend=${this.clientOptions.server - 1}&game=0`;
+        else this.clientOptions.wss = `wss://${this.clientOptions.location}evades.io/api/game/connect?backend=${this.clientOptions.server}&game=0`;
 
         if(options.sessionCookie) {
             this.clientOptions.sessionCookie = options.sessionCookie;
@@ -80,6 +86,12 @@ class EJS extends eventemitter {
             this.clientOptions.sessionCookie = null;
         };
     };
+
+    /**
+     * Sets the key state.
+     * @param {string} key - The key to set.
+     * @param {boolean} value - The value of the key.
+     */
     setKeyState(key, value) {
         let keys = { "up": 1, "down": 3, "right": 4, "left": 2 };
         let values = { true: 1, false: 2 };
@@ -101,17 +113,75 @@ class EJS extends eventemitter {
         this.ws.sequence++;
         if(this.ws.sequence >= 256) this.ws.sequence = 0;
     };
-    setMouseMovement(x, y) {
-        let data = {
-            mouseDown: {
-                x,
-                y,
-                updated: true
-            }
-        };
 
-        this.ws.send(protocol.ClientPayload.encode(protocol.ClientPayload.create(data)).finish());
+    /**
+     * Sets the mouse movement.
+     * @param {number} x - The x coordinate.
+     * @param {number} y - The y coordinate.
+     */
+    setMouseMovement(x, y) {
+        if (this.input.mouseDown.x === x && this.input.mouseDown.y === y) return;
+
+        this.input.mouseDown.x = x;
+        this.input.mouseDown.y = y;
+        this.input.mouseDown.updated = true;
+
+        let payload = {
+            blockedUsernames: [],
+            keys: [],
+            sequence: this.ws.sequence,
+            unblockedUsernames: []
+        }
+
+        if (x !== 0 || y !== 0) {
+            payload = this.input;
+        }
+
+        this.ws.send(protocol.ClientPayload.encode(protocol.ClientPayload.create(payload)).finish());
+
+        this.ws.sequence++;
+        if (this.ws.sequence >= 256) this.ws.sequence = 0;
     };
+
+    /**
+     * Upgrades the player.
+     * @param {number} num - The number of upgrades.
+     */
+    upgrade(num) {
+        this.ws.send(protocol.ClientPayload.encode(protocol.ClientPayload.create({
+            blockedUsernames: [],
+            keys: [
+                {
+                    keyEvent: 1,
+                    keyType: 14,
+                }
+            ],
+            sequence: this.ws.sequence,
+            unblockedUsernames: []
+        })).finish());
+
+        this.ws.sequence++;
+        if (this.ws.sequence >= 256) this.ws.sequence = 0;
+
+        this.ws.send(protocol.ClientPayload.encode(protocol.ClientPayload.create({
+            blockedUsernames: [],
+            keys: [
+                {
+                    keyEvent: 2,
+                    keyType: 14,
+                }
+            ],
+            sequence: this.ws.sequence,
+            unblockedUsernames: []
+        })).finish());
+
+        this.ws.sequence++;
+        if (this.ws.sequence >= 256) this.ws.sequence = 0;
+    }
+
+    /**
+     * Creates a WebSocket connection.
+     */
     makeSocket() {
         let cookie = `session="${this.clientOptions.sessionCookie}"`;
         if(this.clientOptions.sessionCookie.length > 174) { // full cookie string
@@ -163,8 +233,6 @@ class EJS extends eventemitter {
             msg = protocol.FramePayload.decode(t);
             msg = protocol.FramePayload.toObject(msg);
 
-            // if(Object.keys(msg).length > 3) console.log(Object.keys(msg));
-
             this.emit("message", msg);
 
             if(msg.chat) {
@@ -173,85 +241,78 @@ class EJS extends eventemitter {
                 this.emit("chatMessage", msg.chat.messages[0]);
             }
 
-            if(!msg.globalEntities || !msg.entities) return;
+            if(msg.entities && msg.globalEntities) {
+                const existingEntityIndexes = Object.keys(msg.entities);
 
-            const entities = {};
-            const existingEntityIndexes = Object.keys(msg.entities);
+                for(let index = 0; index < existingEntityIndexes.length; index++) {
+                    const entityId = existingEntityIndexes[index];
+                    const entityData = msg.entities[entityId];
 
-            for(let index = 0; index < existingEntityIndexes.length; index++) {
-                const entityId = existingEntityIndexes[index];
-                const entityData = msg.entities[entityId];
-                entities[entityId] = entityData;
-            };
+                    if(this.world.entities && this.world.entities[entityId]) {
+                        for(const key in entityData) {
+                            if(entityData.hasOwnProperty(key)) {
+                                this.world.entities[entityId][key] = entityData[key];
+                            }
+                        }
+                    } else {
+                        if(!this.world.entities) this.world.entities = {};
+                        this.world.entities[entityId] = entityData;
+                    }
+                }
 
-            const newGlobalEntityIds = Object.keys(msg.globalEntities);
+                for(let i = 0; i < msg.globalEntities.length; i++) {
+                    const update = msg.globalEntities[i];
+                    const playerId = update.id;
+                
+                    if(update.removed) {
+                        delete this.players[playerId];
+                        this.emit("playerLeft", playerId);
+                        continue;
+                    }
+                
+                    if(this.players[playerId]) {
+                        for(const key in update) {
+                            if(update.hasOwnProperty(key)) {
+                                if (key === 'x' || key === 'y') {
+                                    const oldPos = this.players[playerId][key];
+                                    const newPos = update[key];
+                                    if (Math.abs(newPos - oldPos) > 10000) continue;
+                                }
+                                this.players[playerId][key] = update[key];
+                            }
+                        }
+                    } else {
+                        this.players[playerId] = update;
+                        this.emit("playerJoin", update);
+                    }
+                }
 
-            for(let newIndex = 0; newIndex < newGlobalEntityIds.length; newIndex++) {
-                const entityId = newGlobalEntityIds[newIndex];
-                const entityData = msg.globalEntities[entityId];
+                for(const playerId in this.players) {
+                    if(this.players.hasOwnProperty(playerId)) {
+                        const player = this.players[playerId];
+                        if(player.name === this.username) {
+                            this.player = player;
+                            break;
+                        }
+                    }
+                }
+            }
 
-                if(entityData.removed) {
-                    if(this.players[entityId]) {
-                        this.emit("playerLeft", this.players[entityId]);
-                    };
-                    delete this.players[entityId];
-                    continue;
-                };
+            if(msg.area) {
+                this.area = msg.area;
+                this.emit("area", msg.area);
+            }
 
-                if(this.players[entityId]) {
-                    for(const key in entityData) {
-                        if(entityData.hasOwnProperty(key)) {
-                            this.players[entityId][key] = entityData[key];
-                        };
-                    };
-                } else {
-                    this.players[entityId] = entityData;
-                    this.emit("playerJoin", entityData);
-                };
-            };
-
-            this.world.entities = entities;
-
-            let players = Object.values(entities).filter(entity => entity.entityType === gameDataProtocol.EntityType.PLAYER);
-
-            players.forEach(player => {
-                if(!this.players[player.id]) {
-                    this.players[player.id] = player;
-                };
-
-                Object.assign(this.players[player.id], player);
-            });
-
-            for(let i = 0; i < msg.globalEntities.length; i++) {
-                const update = msg.globalEntities[i];
-                const playerId = update.id;
-              
-                if(update.removed) {
-                    delete this.players[playerId];
-                    this.emit("playerLeft", playerId);
-                    continue;
-                };
-              
-                if(this.players[playerId]) {
-                    Object.assign(this.players[playerId], update);
-                } else {
-                    this.players[playerId] = update;
-                    this.emit("playerJoin", update);
-                };
-            };
-
-            for(const playerId in this.players) {
-                if(this.players.hasOwnProperty(playerId)) {
-                    const player = this.players[playerId];
-                    if(player.name === this.username) {
-                        this.player = player;
-                        break;
-                    };
-                };
-            };
-        };
+            if(msg.map) {
+                this.map = msg.map;
+                this.emit("map", msg.map);
+            }
+        }
 
         this.ws.onclose = () => {
+            this.player = {};
+            this.players = {};
+            this.world = { entities: null, globalEntities: null };
             this.emit("close");
         };
     };
