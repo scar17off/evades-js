@@ -1,15 +1,27 @@
-const eventemitter = require("events");
-const WebSocket = require("ws");
-const axios = require('axios');
+const isBrowser = typeof window !== 'undefined';
 
-const parcelRequire = require("./client-require.js");
+if(isBrowser) {
+    function appendScript(src) {
+        const script = document.createElement("script");
+        script.src = src;
+        document.head.appendChild(script);
+    }
+
+    appendScript("https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js");
+} else {
+    EventEmitter = require("events");
+    WebSocket = require("ws");
+    fetch = require('node-fetch');
+}
+
+const parcelRequire = require("./client-require.js"); // TODO: make this work in browser.
 const protocol = parcelRequire("3V5RS");
 
 /**
  * EJS class to handle the game client.
- * @extends eventemitter
+ * @extends EventEmitter
  */
-class EJS extends eventemitter {
+class EJS extends EventEmitter {
     /**
      * Creates an instance of EJS.
      * @param {Object} options - The options for the client.
@@ -55,36 +67,46 @@ class EJS extends eventemitter {
             this.clientOptions.username = options.username;
             this.clientOptions.password = options.password;
 
-            axios.post("https://evades.io/api/auth/login", {
-                username: this.clientOptions.username,
-                password: this.clientOptions.password,
-                captchaToken: null
+            fetch("https://evades.io/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: this.clientOptions.username,
+                    password: this.clientOptions.password,
+                    captchaToken: null
+                })
             })
             .then(response => {
-                if(response.headers["set-cookie"]) {
-                    this.clientOptions.sessionCookie = response.headers["set-cookie"][0];
+                if (response.headers.get("set-cookie")) {
+                    this.clientOptions.sessionCookie = response.headers.get("set-cookie");
                     this.makeSocket();
-                };
+                }
             })
             .catch(error => {
                 console.error("[Error]:", error);
             });
         } else if(!options.username && !options.password && !options.sessionCookie) {
-            axios.post("https://evades.io/api/auth/guest", {
-                captchaToken: null
+            fetch("https://evades.io/api/auth/guest", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    captchaToken: null
+                })
             })
             .then(response => {
-                if(response.headers["set-cookie"]) {
-                    this.clientOptions.sessionCookie = response.headers["set-cookie"][0];
+                if (response.headers.get("set-cookie")) {
+                    this.clientOptions.sessionCookie = response.headers.get("set-cookie");
                     this.makeSocket();
-                };
+                }
             })
             .catch(error => {
                 console.error("[Error]:", error);
             });
-        } else {
-            this.clientOptions.sessionCookie = null;
-        };
+        }
     };
 
     /**
@@ -148,12 +170,13 @@ class EJS extends eventemitter {
      * @param {number} num - The number of upgrades.
      */
     upgrade(num) {
+        num += 13
         this.ws.send(protocol.ClientPayload.encode(protocol.ClientPayload.create({
             blockedUsernames: [],
             keys: [
                 {
                     keyEvent: 1,
-                    keyType: 14,
+                    keyType: num,
                 }
             ],
             sequence: this.ws.sequence,
@@ -168,7 +191,7 @@ class EJS extends eventemitter {
             keys: [
                 {
                     keyEvent: 2,
-                    keyType: 14,
+                    keyType: num,
                 }
             ],
             sequence: this.ws.sequence,
@@ -248,15 +271,28 @@ class EJS extends eventemitter {
                     const entityId = existingEntityIndexes[index];
                     const entityData = msg.entities[entityId];
 
-                    if(this.world.entities && this.world.entities[entityId]) {
+                    if(this.players && this.players[entityId]) {
+                        for(const key in entityData) {
+                            if(entityData.hasOwnProperty(key)) {
+                                this.players[entityId][key] = entityData[key];
+                            }
+                        }
+                    } else if(this.world.entities && this.world.entities[entityId]) {
+                        const oldEntityPos = { x: this.world.entities[entityId].x, y: this.world.entities[entityId].y };
                         for(const key in entityData) {
                             if(entityData.hasOwnProperty(key)) {
                                 this.world.entities[entityId][key] = entityData[key];
                             }
                         }
+                        if (oldEntityPos.x !== undefined && oldEntityPos.y !== undefined && entityData.x !== undefined && entityData.y !== undefined) {
+                            const velocityX = entityData.x - oldEntityPos.x;
+                            const velocityY = entityData.y - oldEntityPos.y;
+                            this.world.entities[entityId].velocity = { x: velocityX, y: velocityY };
+                        }
                     } else {
                         if(!this.world.entities) this.world.entities = {};
                         this.world.entities[entityId] = entityData;
+                        this.world.entities[entityId].velocity = { x: 0, y: 0 };
                     }
                 }
 
@@ -277,11 +313,16 @@ class EJS extends eventemitter {
                                     const oldPos = this.players[playerId][key];
                                     const newPos = update[key];
                                     if (Math.abs(newPos - oldPos) > 10000) continue;
+                                    this.players[playerId].velocity = {
+                                        x: update.x - oldPos.x,
+                                        y: update.y - oldPos.y
+                                    };
                                 }
                                 this.players[playerId][key] = update[key];
                             }
                         }
                     } else {
+                        update.velocity = { x: 0, y: 0 };
                         this.players[playerId] = update;
                         this.emit("playerJoin", update);
                     }
